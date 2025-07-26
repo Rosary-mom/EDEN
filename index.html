@@ -3,210 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EDEN: Theleologisches Paradies – Über die Tage Hinaus</title>
+    <title>Projekt Chimera: Das Goldene Zeitalter - Logbuch der Menschheiten</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto Mono', monospace;
-            background-color: #0a0a1a;
-            color: #e0e0e0;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/39/Concept_Mars_colony.jpg'); /* NASA public domain Mars-Siedlung Konzept (frei nutzbar) */
+            background-color: #0e0e0e;
+            color: #ee6e6e;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/39/Concept_Mars_colony.jpg');
             background-size: cover;
         }
         .font-orbitron {
             font-family: 'Orbitron', sans-serif;
         }
-        .resource-card {
-            background-color: rgba(20, 20, 40, 0.7);
-            border: 1px solid rgba(0, 255, 255, 0.3);
+        .resource-card, .project-card, .log-card, .matrix-card, .cockpit-card {
+            background-color: rgba(0, 20, 40, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(5px);
             transition: all 0.3s ease;
+            padding: 1rem;
+            border-radius: 0.5rem;
         }
         .action-button {
             background-color: rgba(0, 100, 100, 0.6);
-            border: 1px solid rgba(0, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 0.5);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            margin-right: 1rem;
         }
         .action-button:hover {
-            background-color: rgba(0, 200, 200, 0.7);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-        }
-        .action-button:disabled {
-            background-color: rgba(50, 50, 50, 0.5);
-            border-color: rgba(100, 100, 100, 0.5);
-            cursor: not-allowed;
-        }
-        .log-entry {
-            border-left: 2px solid rgba(0, 255, 255, 0.5);
-        }
-        .progress-bar-container {
-            background-color: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 255, 255, 0.2);
+            background-color: rgba(0, 150, 150, 0.8);
+            transform: scale(1.05);
         }
         .progress-bar {
-            background: linear-gradient(90deg, rgba(0,255,255,1) 0%, rgba(0,150,255,1) 100%);
-            transition: width 0.5s ease-in-out;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            background-color: rgba(255, 255, 255, 0.2);
+            height: 0.5rem;
+            border-radius: 0.25rem;
+            overflow: hidden;
         }
-        .modal-backdrop {
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
+        .progress-fill {
+            background-color: #ee6e6e;
+            height: 100%;
+            transition: width 0.3s ease;
         }
-        .modal-content {
-            background-color: #0a0a1a;
-            border: 1px solid rgba(0, 255, 255, 0.5);
+        .gauge {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 5px solid #ee6e6e;
+            position: relative;
+            margin: 0 auto;
         }
-        .tooltip {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .has-tooltip:hover .tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
-        .gif-illustration {
+        .gauge-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-height: 200px;
-            margin-top: 10px;
+            height: 100%;
+            background: conic-gradient(#ee6e6e 0% var(--fill), transparent var(--fill) 100%);
+            border-radius: 50%;
         }
-        .flash-light {
-            animation: sos-flash 2s infinite;
+        .hidden {
+            display: none;
         }
-        @keyframes sos-flash {
-            0% { background-color: rgba(255, 255, 255, 0); }
-            10% { background-color: rgba(255, 255, 255, 1); } /* Short */
-            20% { background-color: rgba(255, 255, 255, 0); }
-            30% { background-color: rgba(255, 255, 255, 1); } /* Short */
-            40% { background-color: rgba(255, 255, 255, 0); }
-            50% { background-color: rgba(255, 255, 255, 1); } /* Short */
-            60% { background-color: rgba(255, 255, 255, 0); }
-            70% { background-color: rgba(255, 255, 255, 1); } /* Long */
-            90% { background-color: rgba(255, 255, 255, 0); }
-            100% { background-color: rgba(255, 255, 255, 0); }
-        }
-        /* Erweiterte Stile für EDEN-Paradies */
-        .eden-glow {
-            animation: eden-pulse 3s infinite;
-            box-shadow: 0 0 25px rgba(255, 255, 0, 0.8);
-        }
-        @keyframes eden-pulse {
-            0% { opacity: 0.8; }
-            50% { opacity: 1; }
-            100% { opacity: 0.8; }
-        }
-        .logbook-paradise {
-            background-color: rgba(255, 255, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.5);
-            padding: 10px;
-            margin-top: 20px;
-            border-radius: 8px;
+        canvas {
+            border: 1px solid #ee6e6e;
+            background: #000;
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div id="game-container" class="max-w-7xl mx-auto">
-        <!-- HEADER (erweitert um EDEN-Thema) -->
-        <header class="text-center mb-8">
-            <h1 class="font-orbitron text-3xl md:text-5xl font-bold text-yellow-300 tracking-wider eden-glow">
-                EDEN: Theleologisches Paradies
-            </h1>
-            <p class="text-yellow-100">
-                Über die Tage Hinaus // RUNDE:
-                <span id="turn-counter">1</span>
-            </p>
-            <!-- Illustration GIF for EDEN (Paradies-Thema) -->
-            <img src="https://media.giphy.com/media/3o7TKz2X0RaUqKXjG0/giphy.gif" alt="Paradise GIF" class="gif-illustration">
-            <!-- SOS Morse Code Button -->
-            <button id="sos-button" class="action-button p-2 mt-4">Send SOS Signal (Light App Reaction)</button>
-            <!-- Reset Button -->
-            <button id="reset-button" class="action-button p-2 mt-4 ml-4">Spiel zurücksetzen</button>
-        </header>
-        <!-- MAIN GRID -->
-        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- LEFT COLUMN: RESOURCES & PROGRESS -->
-            <section class="lg:col-span-1 space-y-6">
-                <!-- RESOURCES -->
-                <div class="resource-card rounded-lg p-4">
-                    <h2 class="font-orbitron text-xl mb-4 border-b border-yellow-700 pb-2">
-                        Paradies-Ressourcen
-                    </h2>
-                    <div id="resources-grid" class="grid grid-cols-2 gap-4">
-                        <!-- Resources will be injected here by JS -->
-                    </div>
-                </div>
-                <!-- PROGRESS -->
-                <div class="resource-card rounded-lg p-4">
-                    <h2 class="font-orbitron text-xl mb-4 border-b border-yellow-700 pb-2">
-                        Theleologische Projekte
-                    </h2>
-                    <div id="progress-bars" class="space-y-4">
-                        <!-- Progress bars will be injected here by JS -->
-                    </div>
-                </div>
-            </section>
-            <!-- MIDDLE COLUMN: ACTIONS -->
-            <section class="lg:col-span-1 space-y-4">
-                <div class="resource-card rounded-lg p-4 h-full">
-                    <h2 class="font-orbitron text-xl mb-4 border-b border-yellow-700 pb-2">
-                        Gambit-Matrix des Lichts
-                    </h2>
-                    <div id="actions-container" class="space-y-3">
-                        <!-- Action buttons will be injected here by JS -->
-                    </div>
-                    <!-- MOVES GIF on Gambit click -->
-                    <img id="moves-gif" src="https://media.giphy.com/media/l0HlK3VUCtB2G4m52/giphy.gif" alt="MOVES GIF" class="gif-illustration hidden">
-                    <!-- TWISTS GIF on Gambit click -->
-                    <img id="twists-gif" src="https://media.giphy.com/media/26FLgGTPsEIAq8vs/giphy.gif" alt="TWISTS GIF" class="gif-illustration hidden">
-                </div>
-            </section>
-            <!-- RIGHT COLUMN: LOG & EVENTS (erweitert um Paradies-Archiv) -->
-            <section class="lg:col-span-1 space-y-4">
-                <div class="resource-card rounded-lg p-4 h-full">
-                    <h2 class="font-orbitron text-xl mb-4 border-b border-yellow-700 pb-2">
-                        Logbuch des Paradieses – Archiv der Menschheiten
-                    </h2>
-                    <!-- Looping Game Movie/GIF in Log -->
-                    <img src="https://media.giphy.com/media/3o7abKhOpu0Nbn9uEo/giphy.gif" alt="Game Loop GIF" class="gif-illustration">
-                    <div id="log-container" class="h-96 overflow-y-auto pr-2 space-y-3 logbook-paradise">
-                        <!-- Log entries will be injected here by JS -->
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-    <!-- MODAL FOR EVENTS/VICTORY/LEVY LEGACY -->
-    <div id="modal" class="fixed inset-0 z-50 items-center justify-center hidden modal-backdrop">
-        <div class="modal-content rounded-lg p-8 m-4 max-w-lg w-full shadow-2xl shadow-yellow-500/20">
-            <h3 id="modal-title" class="font-orbitron text-2xl mb-4 text-yellow-300"></h3>
-            <p id="modal-body" class="mb-6"></p>
-            <button id="modal-close" class="w-full action-button p-2 rounded-lg font-bold">Weiter</button>
+<body class="p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl font-orbitron mb-4 text-center">PROJEKT CHIMERA: Logbuch der Menschheiten</h1>
+        <p class="text-2xl mb-6 text-center">Operation: Das Goldene Zeitalter // RUNDE: <span id="round-counter">1</span></p>
+
+        <img src="https://media.giphy.com/media/kEESrxmc9pd9Jb064Q/giphy.gif" alt="Climate Crisis GIF" class="w-full mb-8 rounded-lg shadow-lg mx-auto" style="max-width: 600px;">
+
+        <div class="flex justify-center mb-8">
+            <button id="sos-button" class="action-button">Send SOS Signal (Light App Reaction)</button>
+            <button id="reset-button" class="action-button">Spiel zurücksetzen</button>
+            <button id="start-gambit" class="action-button">Start Gambit</button>
+            <button id="enter-cockpit" class="action-button">Enter Mars Mission Cockpit</button>
+            <button id="dwarf-engine" class="action-button">Activate DWARF Engine</button>
         </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="resource-card">
+                <h2 class="text-2xl font-orbitron mb-4">Kommando-Ressourcen</h2>
+                <ul class="list-disc ml-4">
+                    <li>Kapital (Mrd.): <span id="capital">18</span></li>
+                    <li>Datenspeicher (Ziop.): <span id="data">5</span></li>
+                    <li>Legitimität (%): <span id="legitimacy">75</span></li>
+                    <li>Personal (Punkte): <span id="personnel">100</span></li>
+                </ul>
+                <p class="mt-4">Verwalte diese Ressourcen weise, um das Universum zu erobern.</p>
+            </div>
+
+            <div class="matrix-card">
+                <h2 class="text-2xl font-orbitron mb-4">Gambit-Matrix</h2>
+                <ul class="list-disc ml-4">
+                    <li>Wissenschaftliche Studie veröffentlichen</li>
+                    <li>Marktmanipulation (Levy-Zyklus)</li>
+                    <li>Lobby-Kampagne starten</li>
+                    <li>Startups auf Github aquirieren</li>
+                </ul>
+                <p class="mt-4">Wähle deine Strategie für die Siedlung des Universums.</p>
+            </div>
+
+            <div class="log-card">
+                <h2 class="text-2xl font-orbitron mb-4">Operations-Log & Archiv der Menschheiten</h2>
+                <ul id="log-list" class="list-disc ml-4">
+                    <li>Runde 1 initialisiert: Mars-Kolonie etabliert.</li>
+                    <li>Enlightenment-Pfad aktiviert. PSPS II's Worte: "See what we created!"</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="project-card mb-8">
+            <h2 class="text-2xl font-orbitron mb-4">Globale Projekte</h2>
+            <ul class="list-disc ml-4">
+                <li>Homo 1 Billiarden: Dritte Chimera starten</li>
+                <li>Chimera jat aktiv, Deine 6 Klimaziele</li>
+                <li>Rosary Think Tank: Dein Ziel: Das Goldene Operation</li>
+                <li>Thera-Climafonds gründen</li>
+                <li>Amazon Legacy Gambit</li>
+                <li>Going Clay Gambit</li>
+                <li>Debt Crisis Gambit</li>
+                <li>Evident Facts Gambit</li>
+                <li>Crypto Voucher Investment</li>
+                <li>International Alliance Gambit</li>
+            </ul>
+        </div>
+
+        <!-- Mars Mission Cockpit with Embedded Canva and DWARF Engine -->
+        <div id="cockpit-section" class="cockpit-card mb-8 hidden">
+            <h2 class="text-2xl font-orbitron mb-4 text-center">Mars Mission Cockpit: Solar System Explorer</h2>
+            <p class="text-center mb-4">Aktiviere den DWARF-Engine für 3D-Erkundung! Embedded Vision:</p>
+            <iframe src="https://www.canva.com/design/DAGqacd25Lg/qjKpPfdQ6PNoxrjbV0E7nw/view?embed" title="Solar System Explorer" class="w-full h-96 rounded-lg shadow-lg" allowfullscreen></iframe>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                    <h3 class="text-xl font-orbitron">Energie Gauge</h3>
+                    <div class="gauge"><div class="gauge-fill" id="energy-gauge" style="--fill: 50%;"></div></div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-orbitron">Settlement Progress</h3>
+                    <div class="progress-bar"><div class="progress-fill" id="settlement-progress" style="width: 20%;"></div></div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-orbitron">Exploration Log</h3>
+                    <p id="exploration-log">Initial scan: Solar System awaits! PSPS II: "This is a real gamechanger!"</p>
+                </div>
+                <div>
+                    <button id="explore-button" class="action-button w-full">Explore New Sector</button>
+                </div>
+                <div class="col-span-2">
+                    <h3 class="text-xl font-orbitron text-center">DWARF Engine: Mars Lander Simulation</h3>
+                    <canvas id="lander-canvas" width="400" height="200" class="mx-auto block"></canvas>
+                    <p class="text-center mt-2">Use arrow keys to land safely on Mars!</p>
+                </div>
+            </div>
+            <p class="mt-4 text-center">Commander Kirk: "Turn on the DWARF engine—explore and settle!"</p>
+        </div>
+
+        <img src="https://media.giphy.com/media/kDfQYYRql4LSGXEfiS/giphy.gif" alt="Mars Exploration Loop GIF" class="w-full mb-8 rounded-lg shadow-lg mx-auto" style="max-width: 600px;">
+
+        <p class="mt-8 text-sm text-center">©®™ ROSARY 2025 ff</p>
+        <p class="text-lg font-orbitron text-center">Be a SuperHero! -"CHIMMY"</p>
     </div>
+
     <script>
-        // Levy Legacy Excerpts (unverändert)...
-        // GAME STATE INITIALIZATION (erweitert um EDEN-Elemente)...
-        // DREHBUCH SLOTS (unverändert)...
-        // GAMBITS (erste Stufe bleibt, erweitert um EDEN-Paradies-Gambits)...
-        // RANDOM EVENTS (unverändert)...
-        // UI RENDERING FUNCTIONS (erweitert um EDEN-Glow und Paradies-Log)...
-        // GAME LOGIC FUNCTIONS (erweitert um erweitertes Archiv: Logs speichern narrative Echos für Ewigkeit)...
-        // VOICE FUNCTION (unverändert)...
-        // SPEICHERN/LADEN (unverändert, speichert Paradies-Archiv)...
-        // SOS BUTTON HANDLER (unverändert)...
-        // RESET BUTTON HANDLER (unverändert)...
-        // INITIALIZE GAME (erweitert um EDEN-Begrüßung)...
-        window.onload = () => {
-            loadGame();  // Lade bei Start
-            if (!gameState.gameOver) {
-                addLog("Willkommen im Theleologischen Paradies EDEN. Über die Tage hinaus, wo Menschheiten entrückt werden. Die erste Stufe der Gambits bleibt als nostalgische Zukunftsvision. Beginne die Operation.", "event");
-                render();
-            }
+        let round = 1;
+        let capital = 18;
+        let data = 5;
+        let legitimacy = 75;
+        let personnel = 100;
+        let settlementProgress = 20;
+
+        const updateResources = () => {
+            document.getElementById('capital').textContent = capital;
+            document.getElementById('data').textContent = data;
+            document.getElementById('legitimacy').textContent = legitimacy;
+            document.getElementById('personnel').textContent = personnel;
+            document.getElementById('energy-gauge').style.setProperty('--fill', `${legitimacy}%`);
+            document.querySelector('#settlement-progress').style.width = `${settlementProgress}%`;
         };
+
+        const addLog = (message) => {
+            const li = document.createElement('li');
+            li.textContent = message;
+            document.getElementById('log-list').appendChild(li);
+        };
+
+        document.getElementById('start-gambit').addEventListener('click', () => {
+            round++;
+            document.getElementById('round-counter').textContent = round;
+            const risk = Math.random() > 0.5 ? 'erfolgreich' : 'riskant';
+            addLog(`Runde ${round}: Gambit initiiert - ${risk}. Enlightenment +10.`);
+            legitimacy += 10;
+            settlementProgress += 5;
+            updateResources();
+            alert('Gambit initiated! Risk level: Medium. Reward: +10 legitimacy points.');
+        });
+
+        document.getElementById('sos-button').addEventListener('click', () => {
+            addLog('SOS-Signal gesendet: Lichtreaktion aktiviert - Hilfsressourcen incoming.');
+            alert('SOS sent! Allies alerted—resources en route.');
+            capital += 2;
+            updateResources();
+        });
+
+        document.getElementById('reset-button').addEventListener('click', () => {
+            round = 1;
+            capital = 18;
+            data = 5;
+            legitimacy = 75;
+            personnel = 100;
+            settlementProgress = 20;
+            document.getElementById('round-counter').textContent = round;
+            document.getElementById('log-list').innerHTML = '<li>Runde 1 initialisiert: Mars-Kolonie etabliert.</li><li>Enlightenment-Pfad aktiviert. PSPS II\'s Worte: "See what we created!"</li>';
+            updateResources();
+            alert('Spiel zurückgesetzt. Neuer Anfang für die Menschheiten.');
+        });
+
+        document.getElementById('enter-cockpit').addEventListener('click', () => {
+            const cockpit = document.getElementById('cockpit-section');
+            cockpit.classList.toggle('hidden');
+            if (!cockpit.classList.contains('hidden')) {
+                addLog('Mars Mission Cockpit aktiviert: Solar System Explorer online.');
+                document.getElementById('exploration-log').textContent = 'Scanning solar system... Mars mission ready! Commander Kirk: "Engage!"';
+            }
+        });
+
+        document.getElementById('dwarf-engine').addEventListener('click', () => {
+            addLog('DWARF-Engine aktiviert: Mars-Landungssimulation gestartet.');
+            startLanderSimulation();
+            alert('DWARF Engine online! Navigate the lander to Mars surface.');
+        });
+
+        document.getElementById('explore-button').addEventListener('click', () => {
+            settlementProgress += 10;
+            if (settlementProgress > 100) settlementProgress = 100;
+            updateResources();
+            addLog('Neuer Sektor erkundet: Settlement +10%. Solar System expands.');
+            alert('Exploration successful! New planets discovered.');
+        });
+
+        function startLanderSimulation() {
+            const canvas = document.getElementById('lander-canvas');
+            const ctx = canvas.getContext('2d');
+            let y = 10; // Lander starting position
+            let vy = 0; // Velocity
+            const gravity = 0.1;
+            const thrust = 0.2;
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowUp') vy -= thrust;
+            });
+
+            function loop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                vy += gravity;
+                y += vy;
+                if (y >= canvas.height - 20) {
+                    y = canvas.height - 20;
+                    vy = 0;
+                    addLog('Mars-Landung erfolgreich! Resources +5.');
+                    capital += 5;
+                    updateResources();
+                    return;
+                }
+                // Draw lander
+                ctx.fillStyle = '#ee6e6e';
+                ctx.fillRect(180, y, 40, 20);
+                // Draw Mars surface
+                ctx.fillStyle = '#8b4513';
+                ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+                requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        updateResources();
     </script>
-    <p class="text-center mt-8 text-yellow-100">©®™ ROSARY 2025 ff<br>Be a SuperHero in EDEN! -"PARA DEI"</p>
 </body>
 </html>
