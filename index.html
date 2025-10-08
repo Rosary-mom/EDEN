@@ -377,7 +377,7 @@
         #links { text-align: center; margin-top: 20px; }
         a { color: #228b22; text-decoration: none; font-weight: bold; }
         a:hover { text-decoration: underline; }
-        @media (max-width: 600px) { #simulation { padding: 10px; } button { width: 100%; } }
+        @media (max-width: 600px) { #simulation { padding: 10px; } button { width: 100%; } table { font-size: 12px; } }
     </style>
 </head>
 <body>
@@ -422,6 +422,7 @@
         const phi = 1.618033988749895; // Goldener Schnitt für Tausch
         const gatiVariance = 0.2; // Gati-Ungenauigkeit (subjektiv)
         const levySamples = [0.76696, 1.94977, 0.04082, -0.82798, -0.26993, -0.98419, 0.48293, 0.89528, 0.01106, -1.86732, -0.65092, 0.40880, -0.38811, -0.11884, 1.70464, 0.02713, -0.27896, -3.46253, 0.18349, -0.42133]; // Für Volatilität
+        const apiKey = '*5Holy7Rosary8Church6!'; // Dein API Security Key
         const logList = document.getElementById('log');
         const rankingBody = document.getElementById('ranking-table').querySelector('tbody');
         
@@ -441,9 +442,9 @@
         
         async function fetchRealData() {
             try {
-                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=wheat&vs_currencies=usd'); // Echte free API für Commodity-Preis (Beispiel: Wheat als Proxy für Getreide)
+                const response = await fetch('https://api.nasa.gov/planetary/earth/imagery?lon=100.75&lat=1.5&date=2014-02-01&api_key=' + apiKey); // Echte NASA API mit deinem Key (Beispiel-Endpoint, passe an)
                 const data = await response.json();
-                return data.wheat ? data.wheat.usd / 100 : 1.2; // Normalisiere zu Faktor (Fallback 1.2)
+                return data.cloud_score ? data.cloud_score + 1 : 1.2; // Verwende cloud_score als Faktor (Fallback 1.2)
             } catch (e) {
                 addLog('Fetch-Fehler: Fallback-Daten verwendet 🔄');
                 return 1.2; // Fallback
