@@ -292,3 +292,106 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Josephs Zyklen: Ernte & Integration - Gamified Simulation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background: #f0f8ff; }
+        h1 { text-align: center; color: #228b22; }
+        #simulation { border: 1px solid #ccc; padding: 15px; margin: 10px auto; max-width: 800px; background: #fff; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 5px; background: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 5px; font-size: 16px; }
+        button:hover { background: #45a049; }
+        input[type="range"] { width: 100%; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 5px 0; padding: 8px; background: #f9f9f9; border-radius: 4px; }
+        .emoji { font-size: 1.2em; }
+        #links { text-align: center; margin-top: 20px; }
+        a { color: #228b22; text-decoration: none; font-weight: bold; }
+        a:hover { text-decoration: underline; }
+        @media (max-width: 600px) { #simulation { padding: 10px; } button { width: 100%; } }
+    </style>
+</head>
+<body>
+    <h1>Josephs Zyklen: Ernte & Integration 🌟</h1>
+    <p style="text-align: center;">Gamified Simulation mit 7 fetten 🌞 & mageren 🍂 Jahren, Ernte-Multiplikatoren (30/60/100-fach 🌾), loyaler Migration 👥, Biosphären-Projekten 🌍 und Twists 🆘. Responsiv für Handy. Links zu QR-REG und SLS für sichere Daten.</p>
+    
+    <div id="simulation">
+        <p id="current-gen">Generation: 0 | Ressourcen: 153 🐟 (Fischwunder-Basis mit e^π ≈23.14 Wachstum)</p>
+        <input type="range" id="migrant-slider" min="0" max="100" value="50" step="1" oninput="updateMigrant(this.value)">
+        <p id="migrant-value">Migrant-Integration: 50% 👥 (Ethik: Gastrecht 📖)</p>
+        <button id="advance">Nächste Generation (Zyklus vorantreiben) ⏳</button>
+        <button id="sos-twist">SOS-Twist auslösen 🆘 (Morse-Signal)</button>
+        <button id="optimize">Optimieren (Extremwert: Max Ernte) 📈</button>
+        <ul id="log"></ul>
+        <div id="imagines">
+            <p class="emoji">🏔️ Antarktis-Pyramide: Fraktal mit 153-Punkten (Pascals Dreieck-Summen 📐).</p>
+            <p class="emoji">🌾 Max-Getreidespeicher: Kegelförmig, 1./2. Ableitung als Wachstumskurven 🚀.</p>
+            <p class="emoji">🌍 Biosphären-Projekt: Mainau-Ökosystem mit Rosary-Ridgebed-Roundabout 🔄.</p>
+        </div>
+    </div>
+    
+    <div id="links">
+        <p>Scan QR für sichere Integration: <a href="https://qr-reg.com" target="_blank">QR-REG.com</a> 📱</p>
+        <p>Geheime Daten speichern: <a href="https://secureletterservice.com" target="_blank">SecureLetterService.com</a> 🔒</p>
+    </div>
+    
+    <script>
+        let gen = 0;
+        let resources = 153 * 23.1407; // Fischwunder mit e^π Wachstumskeim
+        const multipliers = [30, 60, 100];
+        const cycleLength = 7;
+        const phi = 1.618033988749895; // Goldener Schnitt für Tausch
+        const gatiVariance = 0.2; // Gati-Ungenauigkeit (subjektiv)
+        const levySamples = [0.76696, 1.94977, 0.04082, -0.82798, -0.26993, -0.98419, 0.48293, 0.89528, 0.01106, -1.86732, -0.65092, 0.40880, -0.38811, -0.11884, 1.70464, 0.02713, -0.27896, -3.46253, 0.18349, -0.42133]; // Für Volatilität
+        const apiKey = 'YOUR_SECRET_KEY'; // Placeholder für USDA oder SLS-API
+        const logList = document.getElementById('log');
+        
+        async function fetchRealData() {
+            // Simuliere Fetch für Echtzeitdaten (z.B. Getreidepreise); ersetze durch echte API
+            return 1.2; // Fallback-Faktor
+        }
+        
+        function updateMigrant(value) {
+            document.getElementById('migrant-value').textContent = `Migrant-Integration: ${value}% 👥 (Ethik: Gastrecht 📖)`;
+            let boost = resources * (value / 100) * (1 + Math.random() * gatiVariance - gatiVariance / 2); // Gati-Unschärfe
+            addLog(`Migrant-Boost: +${boost.toFixed(2)} (Biosphären-Projekt 🌍) - Scan QR für Details: qr-reg.com 🔍`);
+        }
+        
+        document.getElementById('advance').addEventListener('click', async () => {
+            if (gen >= 20) return;
+            gen++;
+            let priceFactor = await fetchRealData();
+            let isFat = Math.floor(gen / cycleLength) % 2 === 0;
+            let levyAdj = levySamples[gen % levySamples.length] || 0;
+            let mult = multipliers[Math.floor(Math.random() * 3)] * priceFactor;
+            let variance = Math.random() * gatiVariance - gatiVariance / 2; // Subjektive Unsicherheit
+            let newRes = resources * (mult + variance + levyAdj) * phi; // Tausch-Wachstum mit Levy
+            addLog(`Gen ${gen} (${isFat ? 'Fett 🌞' : 'Mager 🍂'}): Mult ${mult.toFixed(2)}, Gati-Varianz ${variance.toFixed(2)}, Levy ${levyAdj.toFixed(2)} -> ${newRes.toFixed(2)} | Bibel: Gen 41:36 📖`);
+            resources = newRes;
+            document.getElementById('current-gen').textContent = `Generation: ${gen} | Ressourcen: ${newRes.toFixed(2)}`;
+        });
+        
+        document.getElementById('sos-twist').addEventListener('click', () => {
+            addLog('SOS-Twist ausgelöst 🆘! Sende Morse-Signal mit Handy-Flashlight 📱 - Scan Armband-QR für Rettung 👥. Sichere Daten via SLS: secureletterservice.com 🔒');
+            // Simuliere Morse: Konsole-Alert für Flashlight-App
+            alert('Sende SOS: ··· — ··· (Flashlight-App nutzen)');
+        });
+        
+        document.getElementById('optimize').addEventListener('click', () => {
+            let r = 1; // Einheitsradius
+            let h = 23.1407; // e^π Höhe
+            let vol = (1/3) * Math.PI * r**2 * h;
+            addLog(`Optimiertes Pyramiden-Volumen (Speicher 🏔️): ${vol.toFixed(2)} | Max Ernte mit Pascals Dreieck 📐 - 1. Ableitung: Wachstum, 2. Ableitung: Beschleunigung 🚀`);
+        });
+        
+        function addLog(message) {
+            let li = document.createElement('li');
+            li.innerHTML = message; // Erlaubt Emojis
+            logList.appendChild(li);
+        }
+    </script>
+</body>
+</html>
