@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROJEKT CHIMERA: Logbuch der Menschheiten - Das Goldene Zeitalter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Globale Stile und Kontrastverbesserung */
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #0e0e0e;
+            color: #00FFFF; /* Helles Cyan für besseren Kontrast und Cyber-Stil */
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/39/Concept_Mars_colony.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+            /* Optional: Mauszeiger im Sci-Fi-Stil */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8" fill="none" stroke="%2300FFFF" stroke-width="2"/></svg>') 9 9, auto;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        /* Modulare Kartenstile */
+        .resource-card, .project-card, .log-card, .matrix-card, .cockpit-card {
+            background-color: rgba(0, 10, 30, 0.85);
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        /* Button-Stile */
+        .action-button {
+            background-color: rgba(0, 100, 100, 0.6);
+            border: 1px solid #00FFFF;
+            color: #FFFFFF;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .action-button:hover {
+            background-color: rgba(0, 150, 150, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px #00FFFF;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background-color: rgba(255, 255, 255, 0.2);
+            height: 0.75rem;
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background-color: #00FFFF;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        /* Gauge / Tacho */
+        .gauge {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 5px solid #00FFFF;
+            position: relative;
+            margin: 0 auto;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .gauge-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(#00FFFF 0% var(--fill), rgba(0, 255, 255, 0.2) var(--fill) 100%);
+            border-radius: 50%;
+        }
+        
+        /* Ranking und Formulare */
+        th, td { padding: 8px; border: 1px solid rgba(0, 255, 255, 0.3); text-align: left; color: #00FFFF; }
+        input[type="text"] { 
+            padding: 8px; 
+            margin: 5px 0; 
+            width: 100%; 
+            background: rgba(0, 0, 0, 0.4); 
+            color: #00FFFF; 
+            border: 1px solid rgba(0, 255, 255, 0.5); 
+            border-radius: 4px;
+        }
+        
+        /* Log-Liste Stil */
+        #log-list {
+            list-style: none;
+            padding: 0;
+        }
+        #log-list li {
+            padding: 4px 0;
+            border-bottom: 1px dashed rgba(0, 255, 255, 0.1);
+        }
+
+        /* Responsivität */
+        @media (max-width: 768px) { 
+            .action-button { width: 100%; margin: 5px 0; }
+            .grid-cols-1, .grid-cols-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-8 p-4 bg-gray-900/70 rounded-lg border border-cyan-500/50">
+            <h1 class="text-4xl md:text-5xl font-orbitron text-white">PROJEKT CHIMERA: Logbuch der Menschheiten</h1>
+            <p class="text-xl mt-2 text-cyan-400">Operation: Das Goldene Zeitalter // RUNDE: <span id="round-counter">1</span></p>
+        </header>
+
+        <div class="mb-8">
+            <img src="https://media.giphy.com/media/kEESrxmc9pd9Jb064Q/giphy.gif" alt="Climate Crisis GIF" class="w-full rounded-lg shadow-lg mx-auto border border-red-500/50" style="max-width: 600px;">
+        </div>
+
+        <div class="flex justify-center mb-8 flex-wrap gap-4">
+            <button id="start-gambit" class="action-button bg-green-700/60">Start Gambit 🎲</button>
+            <button id="enter-cockpit" class="action-button">Enter Mars Mission Cockpit 🛰️</button>
+            <button id="sos-button" class="action-button bg-red-700/60">Send SOS Signal 🆘</button>
+            <button id="reset-button" class="action-button bg-gray-500/60">Spiel zurücksetzen</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="resource-card">
+                <h2 class="text-2xl font-orbitron mb-4 text-cyan-400">Kommando-Ressourcen</h2>
+                <ul class="space-y-2">
+                    <li>Kapital (Mrd.): <span id="capital" class="font-bold text-green-400">18</span> 💰</li>
+                    <li>Datenspeicher (Ziop.): <span id="data" class="font-bold text-yellow-400">5</span> 💾</li>
+                    <li>Legitimität (%): <span id="legitimacy" class="font-bold text-blue-400">75</span> 📜</li>
+                    <li>Personal (Punkte): <span id="personnel" class="font-bold text-purple-400">100</span> 👥</li>
+                </ul>
+            </div>
+
+            <div class="matrix-card">
+                <h2 class="text-2xl font-orbitron mb-4 text-cyan-400">Globale Projekte (Gambit-Matrix)</h2>
+                <ul class="list-disc ml-4 space-y-1 text-sm">
+                    <li>Rosary Think Tank: Das Goldene Zeitalter 🧠</li>
+                    <li>Amazon Legacy Gambit 🌳</li>
+                    <li>Going Clay Gambit (Bodenfruchtbarkeit) 🏺</li>
+                    <li>Debt Crisis Gambit (Levy-Zyklus) 📉</li>
+                    <li>Evident Facts Gambit (Wissenschaft) 🔍</li>
+                </ul>
+            </div>
+
+            <div class="log-card">
+                <h2 class="text-2xl font-orbitron mb-4 text-cyan-400">Operations-Log & Archiv</h2>
+                <ul id="log-list" class="space-y-1 text-sm overflow-y-auto max-h-40">
+                    <li>Runde 1 initialisiert: Mars-Kolonie etabliert. 🚀</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="cockpit-section" class="cockpit-card mb-8 hidden">
+            <h2 class="text-3xl font-orbitron mb-6 text-center text-red-500">Mars Mission Cockpit: DWARF Engine Kontrollzentrum</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="h-96 w-full bg-black rounded-lg shadow-xl border border-cyan-500/50 p-2">
+                    <iframe src="https://www.canva.com/design/DAGqacd25Lg/qjKpPfdQ6PNoxrjbV0E7nw/view?embed" title="Solar System Explorer" class="w-full h-full rounded-lg" allowfullscreen></iframe>
+                </div>
+
+                <div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <h3 class="text-xl font-orbitron text-yellow-400">Legitimität/Energie ⚡</h3>
+                            <div class="gauge"><div class="gauge-fill" id="energy-gauge" style="--fill: 75%;"></div></div>
+                        </div>
+                        <div class="text-center p-4">
+                            <h3 class="text-xl font-orbitron text-green-400">Settlement Progress 🏗️</h3>
+                            <div class="progress-bar mt-2"><div class="progress-fill" id="settlement-progress" style="width: 20%;"></div></div>
+                            <p class="mt-2 text-sm text-gray-400">Fortschritt der Kolonisierung.</p>
+                            <button id="explore-button" class="action-button mt-4 w-full">Explore New Sector 🔭</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <h3 class="text-xl font-orbitron text-center text-cyan-400">DWARF Engine: Mars Lander Simulation 🚀</h3>
+                        <canvas id="lander-canvas" width="400" height="200" class="mx-auto block mt-2 border-cyan-500"></canvas>
+                        <p class="text-center mt-2 text-sm text-gray-400">Use Arrow-Up (↑) to activate thrust and land safely!</p>
+                        <button id="dwarf-engine" class="action-button w-full mt-4 bg-purple-700/60">Activate DWARF Engine</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="ranking" class="cockpit-card mb-8">
+            <h2 class="text-3xl font-orbitron mb-4 text-center text-yellow-400">Spieler-Ranking 🏆 (Effizienz-Score)</h2>
+            <div class="flex flex-col md:flex-row gap-4 mb-4">
+                <input type="text" id="player-name" placeholder="Dein Name für Ranking" class="flex-grow">
+                <button id="save-score" class="action-button flex-shrink-0 bg-yellow-700/60">Score speichern</button>
+            </div>
+            <table id="ranking-table">
+                <thead><tr><th>Name</th><th>Score (Effizienz)</th><th>Datum</th></tr></thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+
+        <p class="mt-8 text-sm text-center text-gray-500">©®™ ROSARY 2025 ff | Be a SuperHero! -"CHIMMY" 🦸‍♂️</p>
+    </div>
+
+    <script>
+        // --- SICHERHEITSHINWEIS: API KEY MUSS EINGEFÜGT WERDEN ---
+        const NASA_API_KEY = 'IHR_SICHERER_NASA_API_SCHLÜSSEL'; // BITTE ERSETZEN!
+
+        // Zentrales Spielzustands-Objekt
+        const initialState = {
+            round: 1,
+            capital: 18,
+            data: 5,
+            legitimacy: 75,
+            personnel: 100,
+            settlementProgress: 20
+        };
+        let gameState = {...initialState}; 
+
+        const rankingBody = document.getElementById('ranking-table').querySelector('tbody');
+
+        // Lade Ranking aus localStorage
+        function loadRanking() {
+            const rankings = JSON.parse(localStorage.getItem('chimeraRankings')) || [];
+            // Sortiere nach dem höchsten Score absteigend
+            rankings.sort((a, b) => b.score - a.score); 
+            rankingBody.innerHTML = '';
+            rankings.forEach(entry => {
+                const row = document.createElement('tr');
+                // Score wird als Ganzzahl dargestellt
+                row.innerHTML = `<td>${entry.name}</td><td>${entry.score}</td><td>${entry.date}</td>`;
+                rankingBody.appendChild(row);
+            });
+        }
+        
+        loadRanking(); 
+
+        const updateResources = () => {
+            document.getElementById('round-counter').textContent = gameState.round;
+            document.getElementById('capital').textContent = gameState.capital;
+            document.getElementById('data').textContent = gameState.data;
+            document.getElementById('legitimacy').textContent = gameState.legitimacy;
+            document.getElementById('personnel').textContent = gameState.personnel;
+            
+            // UI Updates für Cockpit
+            const legFill = gameState.legitimacy > 100 ? 100 : gameState.legitimacy;
+            const settlementFill = gameState.settlementProgress > 100 ? 100 : gameState.settlementProgress;
+
+            document.getElementById('energy-gauge').style.setProperty('--fill', `${legFill}%`);
+            document.querySelector('#settlement-progress').style.width = `${settlementFill}%`;
+        };
+
+        const addLog = (message) => {
+            const li = document.createElement('li');
+            li.textContent = message;
+            const logList = document.getElementById('log-list');
+            logList.prepend(li);
+            
+            // Beschränkung des Logs auf 10 Einträge
+            if (logList.children.length > 10) {
+                logList.removeChild(logList.lastChild);
+            }
+        };
+
+        // --- API Anbindung (Platzhalter) ---
+        async function fetchRealData() {
+            // HIER MÜSSEN SIE DIE LOGIK FÜR IHRE QR-Reg.com API UND DEN KEY EINFÜGEN
+            // Beispiel mit NASA DEMO_KEY (muss ersetzt werden):
+            const NASA_URL = `https://api.nasa.gov/planetary/earth/imagery?lon=100.75&lat=1.5&date=2014-02-01&api_key=${NASA_API_KEY}`;
+            
+            try {
+                // FÜR PRODUKTIV-UMGEBUNG: Nutzen Sie IHR Backend hier, um den KEY zu schützen!
+                // const response = await fetch(NASA_URL);
+                // const data = await response.json();
+                // const factor = data.cloud_score ? 1.0 + (data.cloud_score / 100) : 1.2; 
+                
+                // Simulierter Faktor (temporärer Fallback):
+                const factor = 1.0 + (Math.random() * 0.5 - 0.25); 
+                addLog(`Real-Data-Fetch Simuliert: Volatilitäts-Faktor ${factor.toFixed(2)} angewandt 🔄`);
+                return factor;
+            } catch (e) {
+                addLog('Fetch-Fehler: API nicht erreichbar. Fallback-Daten verwendet (1.2) 🔄');
+                return 1.2; 
+            }
+        }
+
+        // --- Event Listener ---
+
+        document.getElementById('start-gambit').addEventListener('click', async () => {
+            if (gameState.capital < 5) {
+                alert('Kapital zu niedrig für Gambit. Benötigt: 5 Mrd.');
+                return;
+            }
+            
+            let factor = await fetchRealData();
+            gameState.round++;
+            
+            // Kosten und Risiko
+            gameState.capital -= 5;
+            const successRate = 0.75 * factor;
+            const isSuccess = Math.random() < successRate;
+
+            if (isSuccess) {
+                const reward = Math.round(15 * factor);
+                gameState.legitimacy += reward;
+                gameState.data += 1;
+                addLog(`Runde ${gameState.round}: Gambit erfolgreich! +${reward} Legitimität. Faktor: ${factor.toFixed(2)} 🌟`);
+            } else {
+                gameState.legitimacy -= 5;
+                gameState.personnel -= 5;
+                addLog(`Runde ${gameState.round}: Gambit fehlgeschlagen. -5 Legitimität & Personal. 💀`);
+            }
+            
+            updateResources();
+        });
+
+        document.getElementById('sos-button').addEventListener('click', () => {
+            addLog('SOS-Signal gesendet: Hilfsressourcen incoming (Kapital +2, Legitimität -5). 🆘');
+            gameState.capital += 2;
+            gameState.legitimacy -= 5;
+            updateResources();
+        });
+
+        document.getElementById('reset-button').addEventListener('click', () => {
+            // Setzt den Zustand zurück
+            gameState = {...initialState};
+            document.getElementById('log-list').innerHTML = '<li>Runde 1 initialisiert: Mars-Kolonie etabliert. 🚀</li>';
+            updateResources();
+            alert('Spiel zurückgesetzt. Neuer Anfang für die Menschheiten.');
+        });
+
+        document.getElementById('enter-cockpit').addEventListener('click', () => {
+            const cockpit = document.getElementById('cockpit-section');
+            cockpit.classList.toggle('hidden');
+            if (!cockpit.classList.contains('hidden')) {
+                addLog('Mars Mission Cockpit aktiviert: Solar System Explorer online. 🛰️');
+            }
+        });
+
+        document.getElementById('explore-button').addEventListener('click', async () => {
+            if (gameState.data < 2) {
+                alert('Daten zu niedrig für Exploration. Benötigt: 2 Ziop.');
+                return;
+            }
+            gameState.data -= 2;
+            let factor = await fetchRealData();
+            
+            const progressIncrease = Math.round(10 * factor);
+            gameState.settlementProgress += progressIncrease;
+            
+            if (gameState.settlementProgress > 100) gameState.settlementProgress = 100;
+            updateResources();
+            addLog(`Neuer Sektor erkundet: Settlement +${progressIncrease}% (Faktor: ${factor.toFixed(2)}). 🌌`);
+        });
+
+        document.getElementById('save-score').addEventListener('click', () => {
+            const name = document.getElementById('player-name').value.trim();
+            if (!name) return alert('Bitte Namen eingeben!');
+            
+            // NEUE, Effizienz-basierte Score-Berechnung (belohnt schnelles und breites Wachstum)
+            const finalScore = (
+                gameState.capital * 10 + 
+                gameState.data * 50 + 
+                gameState.legitimacy * 2 + 
+                gameState.settlementProgress * 5
+            ) / gameState.round;
+
+            const rankings = JSON.parse(localStorage.getItem('chimeraRankings')) || [];
+            rankings.push({ 
+                name, 
+                score: Math.round(finalScore), 
+                date: new Date().toLocaleDateString() 
+            });
+            localStorage.setItem('chimeraRankings', JSON.stringify(rankings));
+            loadRanking();
+            addLog(`Score gespeichert für ${name}: ${Math.round(finalScore)} 🏆`);
+        });
+
+        // --- Lander Simulation Logik ---
+
+        function startLanderSimulation() {
+            const canvas = document.getElementById('lander-canvas');
+            const ctx = canvas.getContext('2d');
+            let y = 10;
+            let vy = 0;
+            let thrustActive = false;
+            const gravity = 0.05;
+            const thrust = 0.15;
+            const landerWidth = 30;
+            const landerHeight = 15;
+
+            const keyHandler = (e) => {
+                if (e.key === 'ArrowUp') thrustActive = true;
+            };
+            const keyUpHandler = (e) => {
+                if (e.key === 'ArrowUp') thrustActive = false;
+            };
+            document.removeEventListener('keydown', keyHandler); // Entfernt alte Listener
+            document.removeEventListener('keyup', keyUpHandler);
+            document.addEventListener('keydown', keyHandler);
+            document.addEventListener('keyup', keyUpHandler);
+
+            function loop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Physik
+                if (thrustActive) {
+                    vy -= thrust;
+                    // Schub Visualisierung
+                    ctx.fillStyle = 'orange';
+                    ctx.beginPath();
+                    ctx.moveTo(190, y + landerHeight);
+                    ctx.lineTo(190 + landerWidth, y + landerHeight);
+                    ctx.lineTo(205, y + landerHeight + 10);
+                    ctx.fill();
+                }
+                
+                vy += gravity;
+                y += vy;
+
+                // Ziel: Landung auf dem Mars
+                if (y >= canvas.height - 10 - landerHeight) {
+                    y = canvas.height - 10 - landerHeight;
+                    
+                    // Listener deaktivieren
+                    document.removeEventListener('keydown', keyHandler);
+                    document.removeEventListener('keyup', keyUpHandler);
+
+                    // Harte Landung (hohe Geschwindigkeit)
+                    if (Math.abs(vy) > 0.5) {
+                        addLog('Mars-Landung fehlgeschlagen! -10 Kapital & Personal. 💥');
+                        gameState.capital -= 10;
+                        gameState.personnel -= 10;
+                    } 
+                    // Sanfte Landung
+                    else {
+                        addLog('Mars-Landung erfolgreich! +5 Kapital. 🎉');
+                        gameState.capital += 5;
+                        gameState.settlementProgress += 5;
+                    }
+                    updateResources();
+                    return;
+                }
+
+                // Lander zeichnen
+                ctx.fillStyle = '#FF00FF';
+                ctx.fillRect(190, y, landerWidth, landerHeight);
+                
+                // Mars-Oberfläche zeichnen
+                ctx.fillStyle = '#8b4513';
+                ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+                
+                requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        document.getElementById('dwarf-engine').addEventListener('click', () => {
+            // Stellt sicher, dass die Simulation nur startet, wenn genügend Ressourcen vorhanden sind
+            if (gameState.personnel < 10) {
+                 alert('Personal zu niedrig für DWARF Engine Start. Benötigt: 10 Punkte.');
+                 return;
+            }
+            gameState.personnel -= 10; // Personal-Kosten
+            addLog('DWARF-Engine aktiviert: Mars-Landungssimulation gestartet. 🚀');
+            startLanderSimulation();
+            updateResources();
+        });
+
+        // Initialisierung
+        updateResources();
+    </script>
+</body>
+</html>
