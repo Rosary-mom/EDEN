@@ -212,7 +212,7 @@
 
     <script>
         // --- SICHERHEITSHINWEIS: API KEY MUSS EINGEFÜGT WERDEN ---
-        const NASA_API_KEY = 'IHR_SICHERER_NASA_API_SCHLÜSSEL'; // BITTE ERSETZEN!
+        const NASA_API_KEY = 'KCD8VILzUZP6KJEyKcK1noU2OYX9WtaqJGhHHxTa'; // BITTE ERSETZEN!
 
         // Zentrales Spielzustands-Objekt
         const initialState = {
